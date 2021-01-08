@@ -235,7 +235,7 @@ else
       echo -e "${RED}[+]         Yes, now, we have an Internet connection! :-)${NOCOLOR}"
     else
       echo -e "${RED}[+]         Hmmm, still no Internet connection... :-(${NOCOLOR}"
-      echo -e "${RED}[+]         We will add a Google nameserver (8.8.8.8) to /etc/resolv.conf and try again...${NOCOLOR}"
+      echo -e "${RED}[+]         Let's add some open nameservers and try again...${NOCOLOR}"
       sudo cp /etc/systemd/resolved.conf /etc/systemd/resolved.conf.bak
       (sudo printf "\n# Added by TorBox install script\nDNS=1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4\n" | sudo tee -a /etc/systemd/resolved.conf) 2>&1
       sudo systemctl restart systemd-resolved
