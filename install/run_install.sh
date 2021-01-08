@@ -88,7 +88,11 @@ clear
 
 clear
 echo -e "${RED}[+] Step 1: Do we have Internet?${NOCOLOR}"
-wget -q --spider http://google.com
+echo -e "${RED}[+]         However, first, let's add some open nameservers!${NOCOLOR}"
+sudo cp /etc/resolv.conf /etc/resolv.conf.bak
+(sudo printf "\n# Added by TorBox install script\nnameserver 1.1.1.1\nnameserver 1.0.0.1\nnameserver 8.8.8.8\nnameserver 8.8.4.4\n" | sudo tee -a /etc/resolv.conf) 2>&1
+sleep 15
+wget -q --spider http://ubuntu.com
 if [ $? -eq 0 ]; then
   echo -e "${RED}[+]         Yes, we have! :-)${NOCOLOR}"
 else
@@ -113,23 +117,9 @@ else
     if [ $? -eq 0 ]; then
       echo -e "${RED}[+]         Yes, now, we have an Internet connection! :-)${NOCOLOR}"
     else
-      echo -e "${WHITE}[!]         Hmmm, still no Internet connection... :-(${NOCOLOR}"
-      echo -e "${RED}[+]         We will add a Google nameserver (8.8.8.8) to /etc/resolv.conf and try again...${NOCOLOR}"
-      sudo cp /etc/resolv.conf /etc/resolv.conf.bak
-      (sudo printf "\n# Added by TorBox install script\nnameserver 8.8.8.8\n" | sudo tee -a /etc/resolv.conf) 2>&1
-      sleep 15
-      echo ""
-      echo -e "${RED}[+]         Dumdidum...${NOCOLOR}"
-      sleep 15
-      echo -e "${RED}[+]         Trying again...${NOCOLOR}"
-      wget -q --spider https://google.com
-      if [ $? -eq 0 ]; then
-        echo -e "${RED}[+]         Yes, now, we have an Internet connection! :-)${NOCOLOR}"
-      else
-        echo -e "${RED}[+]         Hmmm, still no Internet connection... :-(${NOCOLOR}"
-        echo -e "${RED}[+]         Internet connection is mandatory. We cannot continue - giving up!${NOCOLOR}"
-        exit 1
-      fi
+      echo -e "${RED}[+]         Hmmm, still no Internet connection... :-(${NOCOLOR}"
+      echo -e "${RED}[+]         Internet connection is mandatory. We cannot continue - giving up!${NOCOLOR}"
+      exit 1
     fi
   fi
 fi
@@ -181,6 +171,7 @@ sudo apt-get -y install tor deb.torproject.org-keyring
 # Additional installations for Python
 sudo pip3 install pytesseract
 sudo pip3 install mechanize
+sudo pip3 install urwid
 
 # 6. Configuring Tor and obfs4proxy
 sleep 10
@@ -220,7 +211,7 @@ else
       echo -e "${RED}[+]          Hmmm, still no Internet connection... :-(${NOCOLOR}"
       echo -e "${RED}[+]          We will add a Google nameserver (8.8.8.8) to /etc/resolv.conf and try again...${NOCOLOR}"
       sudo cp /etc/resolv.conf /etc/resolv.conf.bak
-      sudo printf "\n# Added by TorBox install script\nnameserver 8.8.8.8\n" | sudo tee -a /etc/resolv.conf
+      (sudo printf "\n# Added by TorBox install script\nnameserver 1.1.1.1\nnameserver 1.0.0.1\nnameserver 8.8.8.8\nnameserver 8.8.4.4\n" | sudo tee -a /etc/resolv.conf) 2>&1
       sleep 15
       echo ""
       echo -e "${RED}[+]          Dumdidum...${NOCOLOR}"
@@ -259,7 +250,7 @@ if [ -e master.zip ]; then
 else
   echo -e "${RED} ${NOCOLOR}"
   echo -e "${WHITE}[!]      Downloading TorBox menu from GitHub failed !!${NOCOLOR}"
-  echo -e "${WHITE}[!]      I'can't update TorBox menu !!${NOCOLOR}"
+  echo -e "${WHITE}[!]      I can't install the TorBox menu !!${NOCOLOR}"
   echo -e "${WHITE}[!]      You may try it later or manually !!${NOCOLOR}"
   sleep 2
   exit 1
@@ -297,6 +288,9 @@ echo -e "${RED}[+] Copied /etc/network/interfaces -- backup done${NOCOLOR}"
 (sudo cp /etc/rc.local /etc/rc.local.bak) 2> /dev/null
 sudo cp etc/rc.local /etc/
 echo -e "${RED}[+] Copied /etc/rc.local -- backup done${NOCOLOR}"
+(sudo cp /etc/resolvconf.conf /etc/resolvcanf.conf.bak) 2> /dev/null
+sudo cp etc/resolvconf.conf /etc/
+sudo resolvconf -u
 if grep -q "#net.ipv4.ip_forward=1" /etc/sysctl.conf ; then
   sudo cp /etc/sysctl.conf /etc/sysctl.conf.bak
   sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
