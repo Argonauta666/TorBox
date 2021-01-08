@@ -288,9 +288,10 @@ echo -e "${RED}[+] Copied /etc/network/interfaces -- backup done${NOCOLOR}"
 (sudo cp /etc/rc.local /etc/rc.local.bak) 2> /dev/null
 sudo cp etc/rc.local /etc/
 echo -e "${RED}[+] Copied /etc/rc.local -- backup done${NOCOLOR}"
-(sudo cp /etc/resolvconf.conf /etc/resolvcanf.conf.bak) 2> /dev/null
+(sudo cp /etc/resolvconf.conf /etc/resolvconf.conf.bak) 2> /dev/null
 sudo cp etc/resolvconf.conf /etc/
 sudo resolvconf -u
+echo -e "${RED}[+] Copied /etc/resolvconf.conf -- backup done${NOCOLOR}"
 if grep -q "#net.ipv4.ip_forward=1" /etc/sysctl.conf ; then
   sudo cp /etc/sysctl.conf /etc/sysctl.conf.bak
   sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
